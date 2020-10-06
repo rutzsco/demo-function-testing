@@ -1,4 +1,3 @@
-
 trigger:
 - master
 - main
@@ -6,6 +5,8 @@ trigger:
 variables:
   azureSubscription: 'c189a8d0-6006-419f-b2c1-0d732ec1c087'
   functionAppName: 'demo-function-testing'
+  resourceGroupName: 'demo-function-testing'
+  storageAccountName: 'demofuncttest'
   vmImageName: 'vs2017-win2016'
   workingDirectory: '$(System.DefaultWorkingDirectory)/Api.Products'
 
@@ -21,24 +22,30 @@ stages:
 
     steps:
     - task: DotNetCoreCLI@2
-      displayName: Build
+      displayName: 'Build project'
       inputs:
-        command: 'build'
-        projects: |
-          $(workingDirectory)/*.csproj
-        arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
+        projects: '$(workingDirectory)/**/*.csproj'
+        arguments: '--output publish_output --configuration Release'
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive files'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish project'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
-        includeRootFolder: false
-        archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-        replaceExistingArchive: true
+        command: publish
+        publishWebProjects: false
+        projects: '$(workingDirectory)/**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
 
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-      artifact: drop
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+        artifact: 'App'
+        publishLocation: 'pipeline'
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(workingDirectory)/Infrastructure'
+        artifact: 'Infrastructure'
+        publishLocation: 'pipeline'
 
 - stage: Deploy
   displayName: Deploy stage
@@ -57,10 +64,21 @@ stages:
         deploy:
 
           steps:
+
+          - task: AzureResourceGroupDeployment@2
+            displayName: 'Create Function Infrastructure'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              resourceGroupName: '$(resourceGroupName)'
+              location: '$(region)'
+              csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-consumption.json'
+              overrideParameters: '-appName $(functionAppName) -storageAccountName $(storageAccountName)'
+              deploymentOutputs: ResourceGroupDeploymentOutputs
+
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
               azureSubscription: '$(azureSubscription)'
               appType: functionApp
               appName: $(functionAppName)
-              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+              package: '$(Pipeline.Workspace)/App/Api.Products.zip'
