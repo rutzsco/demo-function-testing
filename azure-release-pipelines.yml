@@ -63,3 +63,4 @@ stages:
                 appType: functionApp
                 appName: $(appName)
                 package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
+                AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)
