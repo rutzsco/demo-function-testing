@@ -1,32 +1,31 @@
-using System.IO;
+using Api.Products;
+using Api.Products.Data;
+using Api.Products.Logic;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.Documents;
-using Api.Products;
-using Api.Products.Logic;
-using Api.Products.Data;
+
+using System.Threading.Tasks;
 
 namespace Products
 {
     public static class AddProduct
     {
         [FunctionName("AddProduct")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "products")] HttpRequest req,
-            [CosmosDB(databaseName: "ProductDatabase", collectionName: "Products", ConnectionStringSetting = "CosmosDBConnection")] IDocumentClient client, ILogger log)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "products")] HttpRequest req,
+                                                    [CosmosDB(ConnectionStringSetting = "CosmosDBConnection")] IDocumentClient client, ILogger log)
         {
             log.LogInformation("AddProduct HTTP trigger function invoked.");
-
-            var mappingResult = req.ToObject<Product>();
-            if(!mappingResult.IsSuccess)
-                return new BadRequestObjectResult(mappingResult.Error);
-
+            
+            // Initialize
             var logic = new ProductCreateCommand(new ProductCosmosDB(client));
-            logic.Execute(mappingResult.Value);
-
-            return new OkResult();
+           
+            // Execute
+            return await WorkflowRunner.Execute(() => { return req.Body.ToObject<Product>(); }, (request) => { return logic.Execute(request); });
         }
     }
 }
