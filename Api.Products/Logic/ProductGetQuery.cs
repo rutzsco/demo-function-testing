@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Api.Products.Logic
 {
@@ -23,9 +24,10 @@ namespace Api.Products.Logic
             _database = database;
         }
 
-        public Result<IEnumerable<Product>> Execute()
+        public async Task<Result<IEnumerable<Product>>> Execute()
         {
-            return Result.Success(Enumerable.Empty<Product>());
+            var list = await _database.Get();
+            return Result.Success(list);
         }
     }
 }
