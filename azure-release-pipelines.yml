@@ -64,3 +64,9 @@ stages:
                 appName: $(appName)
                 package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
                 AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
+
+            - task: DotNetCoreCLI@2
+              inputs:
+                command: 'test'
+                projects: '**/*.FunctionalTest.csproj'
+                testRunTitle: 'Functional Test'
