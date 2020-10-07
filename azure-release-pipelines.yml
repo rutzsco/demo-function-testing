@@ -62,4 +62,4 @@ stages:
                 azureSubscription: '$(azureSubscription)'
                 appType: functionApp
                 appName: $(appName)
-                package: '$(Pipeline.Workspace)/App/Api.Products.zip'
+                package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
