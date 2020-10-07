@@ -38,12 +38,12 @@ stages:
                 location: '$(region)'
                 csmFile: '$(Pipeline.Workspace)/build/Infrastructure/cosmos-db.json'
                 overrideParameters: '-accountName demo-function-testing-db-ci -databaseName ProductDB -location $(regionshort) -container1Name "Products" -container1PartitionKey "/id" -throughput 400'
-                deploymentOutputs: ResourceGroupDeploymentOutputs
+                deploymentOutputs: CosmosDBDeploymentOutputs
 
             - powershell: |
-                $outputs = ConvertFrom-Json $($env:RoomEventEgressDeploymentOutputs)
+                $outputs = ConvertFrom-Json $($env:ResourceGroupDeploymentOutputs)
                 foreach ($output in $outputs.PSObject.Properties) {
-                Write-Host "##vso[task.setvariable variable=RoomEventEgress_$($output.Name)]$($output.Value.value)"
+                Write-Host "##vso[task.setvariable variable=CosmosDBDeploymentOutputs_$($output.Name)]$($output.Value.value)"
                 } 
 
             - task: AzureResourceGroupDeployment@2
