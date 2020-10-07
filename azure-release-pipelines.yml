@@ -3,11 +3,11 @@ trigger: none
 resources:
   pipelines:
   - pipeline: build
-    source: 'digital-twin-topology-service - BUILD'
+    source: 'demo-function-testing - BUILD'
   
 variables:
   vmImageName: 'vs2017-win2016'
-  azureSubscription: 'RUTZSCO-MSDN'
+  azureSubscription: 'AZ-PIPELINES-DEPLOYMENT-TO-RUTZSCO-DEMO'
   region: 'Central US'
   regionshort: 'centralus'
 
