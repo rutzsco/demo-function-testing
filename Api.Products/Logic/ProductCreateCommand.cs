@@ -24,7 +24,7 @@ namespace Api.Products.Logic
 
         public Result Execute(Product product)
         {
-            if (product.Id > 0)
+            if (product.Id <= 0)
                 return Result.Failure("Invalid Product Id.");
 
             _database.Create(product);
