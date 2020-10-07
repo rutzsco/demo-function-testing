@@ -12,6 +12,64 @@ variables:
   regionshort: 'centralus'
 
 stages:
+ - stage: FT
+   displayName: FT stage 
+   variables:
+     appName: 'demo-function-testing-api-ft'
+     storageAccountName: 'azfunctdftaft'
+     resourceGroupName: 'demo-function-testing-ft'  
+   jobs:
+   - deployment: Deploy
+     displayName: Deploy
+     environment: 'FT'
+     pool:
+        vmImage: $(vmImageName)   
+      
+     strategy:
+        runOnce:
+          deploy:
+  
+            steps:
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'CosmosDB - Deploy'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                resourceGroupName: '$(resourceGroupName)'
+                location: '$(region)'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/cosmos-db.json'
+                overrideParameters: '-accountName demo-function-testing-db-ft -databaseName ProductDatabase -location $(regionshort) -container1Name "Products" -container1PartitionKey "/id" -throughput 400'
+                deploymentOutputs: CosmosDBDeploymentOutputs
+
+            - powershell: |
+                $outputs = ConvertFrom-Json $($env:CosmosDBDeploymentOutputs)
+                foreach ($output in $outputs.PSObject.Properties) {
+                Write-Host "##vso[task.setvariable variable=CosmosDBDeploymentOutputs_$($output.Name)]$($output.Value.value)"
+                } 
+
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'Create Function Infrastructure'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                resourceGroupName: '$(resourceGroupName)'
+                location: '$(region)'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-consumption.json'
+                overrideParameters: '-appName $(appName) -storageAccountName $(storageAccountName)'
+                deploymentOutputs: ResourceGroupDeploymentOutputs
+
+            - task: AzureFunctionApp@1
+              displayName: 'Azure functions app deploy'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                appType: functionApp
+                appName: $(appName)
+                package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
+                AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
+
+            - task: DotNetCoreCLI@2
+              inputs:
+                command: 'test'
+                projects: '**/*.FunctionalTest.csproj'
+                testRunTitle: 'Functional Test'
  - stage: CI
    displayName: CI stage 
    variables:
@@ -64,9 +122,3 @@ stages:
                 appName: $(appName)
                 package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
                 AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
-
-            - task: DotNetCoreCLI@2
-              inputs:
-                command: 'test'
-                projects: '**/*.FunctionalTest.csproj'
-                testRunTitle: 'Functional Test'
