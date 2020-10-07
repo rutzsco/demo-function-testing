@@ -65,6 +65,10 @@ stages:
                 package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
                 AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
 
+            - task: ExtractFiles@1
+              inputs:
+              archiveFilePatterns: '$(Pipeline.Workspace)/build/App/Api.Products.zip' 
+
             - task: DotNetCoreCLI@2
               inputs:
                 command: 'test'
