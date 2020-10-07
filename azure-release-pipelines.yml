@@ -1,0 +1,66 @@
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: build
+    source: 'digital-twin-topology-service - BUILD'
+  
+variables:
+  vmImageName: 'vs2017-win2016'
+  azureSubscription: 'RUTZSCO-MSDN'
+  region: 'Central US'
+  regionshort: 'centralus'
+
+stages:
+ - stage: CI
+   displayName: CI stage 
+   variables:
+     app-name: 'demo-digital-twin-topology-service'
+     storageAccountName: 'azfunctsci'
+     resourceGroupName: 'demo-digital-twin'  
+   jobs:
+   - deployment: Deploy
+     displayName: Deploy
+     environment: 'CI'
+     pool:
+        vmImage: $(vmImageName)   
+      
+     strategy:
+        runOnce:
+          deploy:
+  
+            steps:
+
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'CosmosDB - Deploy'
+              inputs:
+                azureSubscription: '$(azureSubscription))'
+                resourceGroupName: '$(resourceGroupName)'
+                location: '$(region)'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/cosmos-db.json'
+                overrideParameters: '-accountName demo-function-testing-db-ci -databaseName ProductDB -location $(region) -container1Name "Products" -container1PartitionKey "/id" -throughput 400'
+                deploymentOutputs: ResourceGroupDeploymentOutputs
+
+            - powershell: |
+                $outputs = ConvertFrom-Json $($env:RoomEventEgressDeploymentOutputs)
+                foreach ($output in $outputs.PSObject.Properties) {
+                Write-Host "##vso[task.setvariable variable=RoomEventEgress_$($output.Name)]$($output.Value.value)"
+                } 
+
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'Create Function Infrastructure'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                resourceGroupName: '$(resourceGroupName)'
+                location: '$(region)'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-consumption.json'
+                overrideParameters: '-appName $(functionAppName) -storageAccountName $(storageAccountName)'
+                deploymentOutputs: ResourceGroupDeploymentOutputs
+
+            - task: AzureFunctionApp@1
+              displayName: 'Azure functions app deploy'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                appType: functionApp
+                appName: $(functionAppName)
+                package: '$(Pipeline.Workspace)/App/Api.Products.zip'
