@@ -5,6 +5,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Documents;
+using Api.Products;
+using Api.Products.Logic;
+using Api.Products.Data;
 
 namespace Products
 {
@@ -16,12 +19,12 @@ namespace Products
         {
             log.LogInformation("AddProduct HTTP trigger function invoked.");
 
-            // Retrieve the message body
-            var requestBody = new StreamReader(req.Body).ReadToEnd();
-            if (string.IsNullOrEmpty(requestBody))
-            {
-                return new BadRequestObjectResult("Not a valid request");
-            }
+            var mappingResult = req.ToObject<Product>();
+            if(!mappingResult.IsSuccess)
+                return new BadRequestObjectResult(mappingResult.Error);
+
+            var logic = new ProductCreateCommand(new ProductCosmosDB(client));
+            logic.Execute(mappingResult.Value);
 
             return new OkResult();
         }

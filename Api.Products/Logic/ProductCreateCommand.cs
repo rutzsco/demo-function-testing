@@ -1,5 +1,7 @@
 ﻿using Api.Products.Data;
 
+using CSharpFunctionalExtensions;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Utilities;
 
@@ -11,23 +13,23 @@ using System.Text;
 
 namespace Api.Products.Logic
 {
-    public class CreateProductAction
+    public class ProductCreateCommand
     {
         private readonly IProductDB _database;
 
-        public CreateProductAction(IProductDB database)
+        public ProductCreateCommand(IProductDB database)
         {
             _database = database;
         }
 
-        public IActionResult Do(Product product)
+        public Result Execute(Product product)
         {
             if (product.Id > 0)
-                return new BadRequestObjectResult("Invalid Product Id.");
+                return Result.Failure("Invalid Product Id.");
 
             _database.Create(product);
 
-            return new OkResult();
+            return Result.Success();
         }
     }
 }

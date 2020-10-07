@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Api.Products.UnitTest
+namespace Api.Products.FunctionalTest
 {
     public class Tests
     {

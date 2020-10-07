@@ -15,9 +15,9 @@ stages:
  - stage: CI
    displayName: CI stage 
    variables:
-     app-name: 'demo-digital-twin-topology-service'
-     storageAccountName: 'azfunctsci'
-     resourceGroupName: 'demo-digital-twin'  
+     app-name: 'demo-function-testing-api'
+     storageAccountName: 'azfunctdftaci'
+     resourceGroupName: 'demo-function-testing'  
    jobs:
    - deployment: Deploy
      displayName: Deploy
@@ -37,7 +37,7 @@ stages:
                 resourceGroupName: '$(resourceGroupName)'
                 location: '$(region)'
                 csmFile: '$(Pipeline.Workspace)/build/Infrastructure/cosmos-db.json'
-                overrideParameters: '-accountName demo-function-testing-db-ci -databaseName ProductDB -location $(regionshort) -container1Name "Products" -container1PartitionKey "/id" -throughput 400'
+                overrideParameters: '-accountName demo-function-testing-db-ci -databaseName ProductDatabase -location $(regionshort) -container1Name "Products" -container1PartitionKey "/id" -throughput 400'
                 deploymentOutputs: CosmosDBDeploymentOutputs
 
             - powershell: |
