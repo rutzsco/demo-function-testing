@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents;
 
 namespace Products
 {
@@ -12,7 +12,7 @@ namespace Products
     {
         [FunctionName("AddProduct")]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "products")] HttpRequest req,
-            [CosmosDB(databaseName: "ProductDatabase", collectionName: "Products", ConnectionStringSetting = "CosmosDBConnection")] DocumentClient client, ILogger log)
+            [CosmosDB(databaseName: "ProductDatabase", collectionName: "Products", ConnectionStringSetting = "CosmosDBConnection")] IDocumentClient client, ILogger log)
         {
             log.LogInformation("AddProduct HTTP trigger function invoked.");
 

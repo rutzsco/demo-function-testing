@@ -41,7 +41,7 @@ stages:
                 deploymentOutputs: CosmosDBDeploymentOutputs
 
             - powershell: |
-                $outputs = ConvertFrom-Json $($env:ResourceGroupDeploymentOutputs)
+                $outputs = ConvertFrom-Json $($env:CosmosDBDeploymentOutputs)
                 foreach ($output in $outputs.PSObject.Properties) {
                 Write-Host "##vso[task.setvariable variable=CosmosDBDeploymentOutputs_$($output.Name)]$($output.Value.value)"
                 } 
