@@ -67,7 +67,7 @@ stages:
 
             - task: ExtractFiles@1
               inputs:
-              archiveFilePatterns: '$(Pipeline.Workspace)/build/App/Api.Products.zip' 
+                archiveFilePatterns: '$(Pipeline.Workspace)/build/App/Api.Products.zip' 
 
             - task: DotNetCoreCLI@2
               inputs:
