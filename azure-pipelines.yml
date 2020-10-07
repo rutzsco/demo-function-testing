@@ -3,7 +3,7 @@ trigger:
 - main
 
 variables:
-  azureSubscription: 'c189a8d0-6006-419f-b2c1-0d732ec1c087'
+  azureSubscription: 'AZ-PIPELINES-DEPLOYMENT-TO-RUTZSCO-DEMO'
   functionAppName: 'demo-function-testing'
   resourceGroupName: 'demo-function-testing'
   storageAccountName: 'demofuncttest'
