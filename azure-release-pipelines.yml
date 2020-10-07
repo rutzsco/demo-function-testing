@@ -37,7 +37,7 @@ stages:
                 resourceGroupName: '$(resourceGroupName)'
                 location: '$(region)'
                 csmFile: '$(Pipeline.Workspace)/build/Infrastructure/cosmos-db.json'
-                overrideParameters: '-accountName demo-function-testing-db-ci -databaseName ProductDB -location $(region) -container1Name "Products" -container1PartitionKey "/id" -throughput 400'
+                overrideParameters: '-accountName demo-function-testing-db-ci -databaseName ProductDB -location $(regionshort) -container1Name "Products" -container1PartitionKey "/id" -throughput 400'
                 deploymentOutputs: ResourceGroupDeploymentOutputs
 
             - powershell: |
