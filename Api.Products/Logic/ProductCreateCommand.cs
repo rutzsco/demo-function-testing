@@ -24,10 +24,11 @@ namespace Api.Products.Logic
 
         public Result Execute(Product product)
         {
-            if (product.Id <= 0)
+            if (string.IsNullOrEmpty(product.Id))
                 return Result.Failure("Invalid Product Id.");
 
-            _database.Create(product);
+  
+            _database.Create(new Product());
 
             return Result.Success();
         }

@@ -22,7 +22,7 @@ namespace Api.Products.UnitTest
         [Test]
         public void Execute_Success()
         {
-            var p1 = new Product() { Id = 1, Description = "Description", Name = "Product 1" };
+            var p1 = new Product() { Id = "1", Description = "Description", Name = "Product 1" };
 
             var mock = new Mock<IProductDB>(MockBehavior.Strict);
             mock.Setup(db => db.Create(p1)).Returns(Task.CompletedTask);
@@ -36,7 +36,7 @@ namespace Api.Products.UnitTest
         public void Execute_ValidationError_Invalid_Id()
         {
             var command = new ProductCreateCommand(null);
-            var result = command.Execute(new Product() { Id = 0, Description = "Description", Name = "Product 1" });
+            var result = command.Execute(new Product() { Id = "0", Description = "Description", Name = "Product 1" });
             Assert.AreEqual(false, result.IsSuccess);
             Assert.AreEqual(true, result.Error.Length > 0);
         }

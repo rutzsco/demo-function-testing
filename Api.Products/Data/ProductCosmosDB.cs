@@ -1,4 +1,6 @@
-﻿using Microsoft.Azure.Documents;
+﻿using CSharpFunctionalExtensions;
+
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 using Newtonsoft.Json;
@@ -31,7 +33,9 @@ namespace Api.Products.Data
         public async Task Create(Product product)
         {
             var uri = UriFactory.CreateDocumentCollectionUri("ProductDatabase", "Products");
-            await _client.CreateDocumentAsync(uri, product);
+            var response = await _client.CreateDocumentAsync(uri, product);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                throw new Exception("DB Call Failed");
         }
 
         public async Task<IEnumerable<Product>> Get()
