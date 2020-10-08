@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Api.Products.UnitTest
 {
     [TestFixture]
-    public class Tests
+    public class ProductCreateCommandTests
     {
         [SetUp]
         public void Setup()
@@ -36,7 +36,7 @@ namespace Api.Products.UnitTest
         public void Execute_ValidationError_Invalid_Id()
         {
             var command = new ProductCreateCommand(null);
-            var result = command.Execute(new Product() { Id = "0", Description = "Description", Name = "Product 1" });
+            var result = command.Execute(new Product() { Id = "", Description = "Description", Name = "Product 1" });
             Assert.AreEqual(false, result.IsSuccess);
             Assert.AreEqual(true, result.Error.Length > 0);
         }

@@ -2,14 +2,7 @@
 
 using CSharpFunctionalExtensions;
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Utilities;
-
 using Products;
-
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Api.Products.Logic
 {
@@ -28,7 +21,7 @@ namespace Api.Products.Logic
                 return Result.Failure("Invalid Product Id.");
 
   
-            _database.Create(new Product());
+            _database.Create(product);
 
             return Result.Success();
         }
