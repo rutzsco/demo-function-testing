@@ -1,5 +1,6 @@
 using Api.Products.Data;
 
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 
@@ -10,6 +11,7 @@ using Products;
 using System;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Api.Products.IntegrationTest
 {
@@ -31,6 +33,10 @@ namespace Api.Products.IntegrationTest
             var accountKey = (string)dbConnectionStringBuilder["AccountKey"];
 
             _Client = new DocumentClient(new Uri(accountEndpoint), accountKey);
+
+            var database = _Client.CreateDatabaseIfNotExistsAsync(new Database { Id = "ProductDatabase" });
+            _Client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri("ProductDatabase")).Wait();
+            CreatePartitionedCollection("ProductDatabase", "Products", "/id").Wait();
         }
 
         [Test]
@@ -49,6 +55,19 @@ namespace Api.Products.IntegrationTest
 
             var products = db.Get().Result;
             Assert.AreEqual(true, products.Count() > 0);
+        }
+
+
+        private async Task<DocumentCollection> CreatePartitionedCollection(string databaseName, string collectionName, string partitionKey)
+        {
+            DocumentCollection collectionDefinition = new DocumentCollection();
+            collectionDefinition.Id = collectionName;
+            collectionDefinition.PartitionKey.Paths.Add(partitionKey);
+
+            DocumentCollection partitionedCollection = await _Client.CreateDocumentCollectionIfNotExistsAsync(
+                UriFactory.CreateDatabaseUri(databaseName), collectionDefinition,new RequestOptions { OfferThroughput = 400 });
+
+            return partitionedCollection;
         }
     }
 }
