@@ -34,7 +34,7 @@ namespace Api.Products.Data
         {
             var uri = UriFactory.CreateDocumentCollectionUri("ProductDatabase", "Products");
             var response = await _client.CreateDocumentAsync(uri, product);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != System.Net.HttpStatusCode.Created)
                 throw new Exception("DB Call Failed");
         }
 
