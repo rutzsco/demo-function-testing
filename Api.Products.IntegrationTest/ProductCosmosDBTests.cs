@@ -32,7 +32,9 @@ namespace Api.Products.IntegrationTest
             var accountEndpoint = (string)dbConnectionStringBuilder["AccountEndpoint"];
             var accountKey = (string)dbConnectionStringBuilder["AccountKey"];
 
-            _Client = new DocumentClient(new Uri(accountEndpoint), accountKey);
+
+
+            _Client = new DocumentClient(new Uri("https://localhost:8081"), "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
 
             var database = _Client.CreateDatabaseIfNotExistsAsync(new Database { Id = "ProductDatabase" });
             _Client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri("ProductDatabase")).Wait();
