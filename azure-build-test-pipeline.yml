@@ -43,18 +43,12 @@ stages:
           Start-CosmosDbEmulator
         failOnStderr: true
         
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          Write-Host "Starting CosmosDbEmulatorEndpointEnvironmentVariable environment variable update'        
-          Write-Host "Cosmos Host: $env:CosmosDbEmulator.Endpoint"
 
     - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
-        projects: '**/*.UnitTest.csproj'
-        testRunTitle: 'Unit Test'
+        projects: '**/*.IntegrationTest.csproj'
+        testRunTitle: 'IntegrationTest'
     
     - task: PublishPipelineArtifact@1
       inputs:
