@@ -44,11 +44,25 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "name": "[variables('accountName')]",
-      "apiVersion": "2016-03-31",
+      "apiVersion": "2020-06-01-preview",
       "location": "[parameters('location')]",
       "kind": "GlobalDocumentDB",
       "properties": {
+        "publicNetworkAccess": "Enabled",
+        "enableAutomaticFailover": false,
+        "enableMultipleWriteLocations": false,
+        "isVirtualNetworkFilterEnabled": false,
+        "virtualNetworkRules": [],
+        "disableKeyBasedMetadataWriteAccess": false,
+        "enableFreeTier": false,
+        "enableAnalyticalStorage": false,
+        "createMode": "Default",
         "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
+        },
         "capabilities": [
           {
             "name": "EnableServerless"
@@ -64,7 +78,7 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
       "name": "[concat(variables('accountName'), '/sql/', parameters('databaseName'))]",
-      "apiVersion": "2016-03-31",
+      "apiVersion": "2020-06-01-preview",
       "dependsOn": [
         "[resourceId('Microsoft.DocumentDB/databaseAccounts/', variables('accountName'))]"
       ],
@@ -80,7 +94,7 @@
     {
       "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
       "name": "[concat(variables('accountName'), '/sql/', parameters('databaseName'), '/', parameters('container1Name'))]",
-      "apiVersion": "2016-03-31",
+      "apiVersion": "2020-06-01-preview",
       "dependsOn": [
         "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', variables('accountName'), 'sql', parameters('databaseName'))]"
       ],
