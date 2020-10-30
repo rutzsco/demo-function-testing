@@ -76,46 +76,57 @@
       }
     },
     {
-      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
-      "name": "[concat(variables('accountName'), '/sql/', parameters('databaseName'))]",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
       "apiVersion": "2020-06-01-preview",
+      "name": "[concat(parameters('databaseName'), '/db1')]",
       "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts/', variables('accountName'))]"
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseName'))]"
       ],
       "properties": {
         "resource": {
-          "id": "[parameters('databaseName')]"
+          "id": "db1"
         },
-        "options": {
-
-        }
+        "options": {}
       }
     },
     {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
-      "name": "[concat(variables('accountName'), '/sql/', parameters('databaseName'), '/', parameters('container1Name'))]",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
       "apiVersion": "2020-06-01-preview",
+      "name": "[concat(variables('accountName'), '/sql/', parameters('databaseName'), '/', parameters('container1Name'))]",
       "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', variables('accountName'), 'sql', parameters('databaseName'))]"
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('databaseName'), 'db1')]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseName'))]"
       ],
       "properties": {
         "resource": {
           "id": "[parameters('container1Name')]",
-          "partitionKey": {
-            "paths": [
-              "[parameters('container1PartitionKey')]"
-            ],
-            "kind": "Hash"
-          },
           "indexingPolicy": {
             "indexingMode": "consistent",
+            "automatic": true,
             "includedPaths": [
               {
                 "path": "/*"
               }
+            ],
+            "excludedPaths": [
+              {
+                "path": "/\"_etag\"/?"
+              }
             ]
+          },
+          "partitionKey": {
+            "paths": [ "[parameters('container1PartitionKey')]" ],
+            "kind": "Hash"
+          },
+          "uniqueKeyPolicy": {
+            "uniqueKeys": []
+          },
+          "conflictResolutionPolicy": {
+            "mode": "LastWriterWins",
+            "conflictResolutionPath": "/_ts"
           }
-        }
+        },
+        "options": {}
       }
     }
   ],
