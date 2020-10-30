@@ -78,13 +78,13 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
       "apiVersion": "2020-06-01-preview",
-      "name": "[concat(parameters('databaseName'), '/db1')]",
+      "name": "[concat(parameters('accountName'), parameters('databaseName'))]",
       "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseName'))]"
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName'))]"
       ],
       "properties": {
         "resource": {
-          "id": "db1"
+          "id": "[parameters('databaseName')]"
         },
         "options": {}
       }
@@ -92,10 +92,10 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
       "apiVersion": "2020-06-01-preview",
-      "name": "[concat(parameters('accountName'), '/sql/', parameters('databaseName'), '/', parameters('container1Name'))]",
+      "name": "[concat(variables('accountName'), '/', parameters('databaseName'), '/', parameters('container1Name'))]",
       "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('databaseName'), 'db1')]",
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseName'))]"
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('accountName'), parameters('databaseName'))]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('accountName'))]"
       ],
       "properties": {
         "resource": {
@@ -132,11 +132,11 @@
   ],
   "outputs": {
     "connectionString": {
-      "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName')), '2019-12-12').connectionStrings[0].connectionString]",
+      "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('accountName')), '2019-12-12').connectionStrings[0].connectionString]",
       "type": "string"
     },
     "primaryMasterKeyKey": {
-      "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName')),'2019-08-01').primaryMasterKey]",
+      "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('accountName')),'2019-08-01').primaryMasterKey]",
       "type": "string"
     }
   }
