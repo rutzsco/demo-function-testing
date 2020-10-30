@@ -48,10 +48,7 @@ stages:
         targetType: 'inline'
         script: |
           Write-Host "Starting CosmosDbEmulatorEndpointEnvironmentVariable environment variable update'        
-          Write-Host "Cosmos Host: $($CosmosDbEmulator.Endpoint)"                 
-          Write-Host "CosmosDbEmulatorEndpointEnvironmentVariable is: $($env:CosmosDbEmulatorEndpointEnvironmentVariable)";
-          Write-Host "##vso[task.setvariable variable=CosmosDbEmulatorEndpointEnvironmentVariable]$(CosmosDbEmulator.Endpoint)"
-          Write-Host "Updating CosmosDbEmulatorEndpointEnvironmentVariable is completed
+          Write-Host "Cosmos Host: $env:CosmosDbEmulator.Endpoint"
 
     - task: DotNetCoreCLI@2
       inputs:
