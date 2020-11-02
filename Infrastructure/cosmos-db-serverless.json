@@ -43,10 +43,18 @@
   "resources": [
     {
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "name": "[variables('accountName')]",
       "apiVersion": "2020-06-01-preview",
+      "name": "[variables('accountName')]",
       "location": "[parameters('location')]",
+      "tags": {
+        "defaultExperience": "Core (SQL)",
+        "hidden-cosmos-mmspecial": "",
+        "CosmosAccountType": "Non-Production"
+      },
       "kind": "GlobalDocumentDB",
+      "identity": {
+        "type": "None"
+      },
       "properties": {
         "publicNetworkAccess": "Enabled",
         "enableAutomaticFailover": false,
@@ -63,16 +71,28 @@
           "maxIntervalInSeconds": 5,
           "maxStalenessPrefix": 100
         },
+        "locations": [
+          {
+            "locationName": "[parameters('location')]",
+            "provisioningState": "Succeeded",
+            "failoverPriority": 0,
+            "isZoneRedundant": false
+          }
+        ],
+        "cors": [],
         "capabilities": [
           {
             "name": "EnableServerless"
           }
-        ]
-      },
-      "tags": {
-        "defaultExperience": "Core (SQL)",
-        "hidden-cosmos-mmspecial": "",
-        "CosmosAccountType": "Non-Production"
+        ],
+        "ipRules": [],
+        "backupPolicy": {
+          "type": "Periodic",
+          "periodicModeProperties": {
+            "backupIntervalInMinutes": 240,
+            "backupRetentionIntervalInHours": 8
+          }
+        }
       }
     },
     {
