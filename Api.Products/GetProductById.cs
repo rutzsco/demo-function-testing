@@ -10,7 +10,7 @@ namespace Products
     public static class GetProductById
     {
         [FunctionName("GetProductById")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "api/products/{id}")] HttpRequest req, string id, ILogger log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "api/products/{id}")] HttpRequest req, string id, ILogger log)
         {
             log.LogInformation("GetProductById HTTP trigger function invoked.");
 

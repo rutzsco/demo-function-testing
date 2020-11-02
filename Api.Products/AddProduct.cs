@@ -16,7 +16,7 @@ namespace Products
     public static class AddProduct
     {
         [FunctionName("AddProduct")]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "api/products")] HttpRequest req,
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "api/products")] HttpRequest req,
                                                     [CosmosDB(ConnectionStringSetting = "CosmosDBConnection")] IDocumentClient client, ILogger log)
         {
             log.LogInformation("AddProduct HTTP trigger function invoked.");
