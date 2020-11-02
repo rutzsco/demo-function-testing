@@ -19,6 +19,8 @@ namespace Api.Products.Data
         Task Create(Product product);
 
         Task<IEnumerable<Product>> Get();
+
+        Task<Product> GetById(string id);
     }
 
     public class ProductCosmosDB : IProductDB
@@ -54,6 +56,13 @@ namespace Api.Products.Data
             } while (continuationToken != null);
 
             return list;
+        }
+
+        public async Task<Product> GetById(string id)
+        {
+            var docUri = UriFactory.CreateDocumentUri("ProductDatabase", "Products", id);
+            var document = await _client.ReadDocumentAsync<Product>(docUri, new RequestOptions { PartitionKey = new PartitionKey(id) });
+            return document;
         }
     }
 }

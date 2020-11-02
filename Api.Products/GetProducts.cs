@@ -18,8 +18,8 @@ namespace Products
         {
             log.LogInformation("GetProducts trigger function invoked.");
 
-            var logic = new ProductGetQuery(new ProductCosmosDB(client));
-            var result = await logic.Execute();
+            var logic = new ProductQueries(new ProductCosmosDB(client));
+            var result = await logic.GetAll();
 
             return new OkObjectResult(result.Value);
         }

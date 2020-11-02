@@ -4,22 +4,23 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using Api.Products.Logic;
+using Api.Products.Data;
+using Microsoft.Azure.Documents;
+using System.Threading.Tasks;
 
 namespace Products
 {
     public static class GetProductById
     {
         [FunctionName("GetProductById")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "api/products/{id}")] HttpRequest req, string id, ILogger log)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "api/products/{id}")] HttpRequest req, string id, [CosmosDB(ConnectionStringSetting = "CosmosDBConnection")] IDocumentClient client, ILogger log)
         {
             log.LogInformation("GetProductById HTTP trigger function invoked.");
 
-            var products = Product.GetAllProducts();
-            var p = products.Where(x => x.Id == id).FirstOrDefault();
-            if (p == null)
-                return new NotFoundResult();
-
-            return new OkObjectResult(p);
+            var logic = new ProductQueries(new ProductCosmosDB(client));
+            var result = await logic.GetById(id);
+            return new OkObjectResult(result.Value);
         }
     }
 }

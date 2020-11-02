@@ -15,18 +15,24 @@ using System.Threading.Tasks;
 
 namespace Api.Products.Logic
 {
-    public class ProductGetQuery
+    public class ProductQueries
     {
         private readonly IProductDB _database;
 
-        public ProductGetQuery(IProductDB database)
+        public ProductQueries(IProductDB database)
         {
             _database = database;
         }
 
-        public async Task<Result<IEnumerable<Product>>> Execute()
+        public async Task<Result<IEnumerable<Product>>> GetAll()
         {
             var list = await _database.Get();
+            return Result.Success(list);
+        }
+
+        public async Task<Result<Product>> GetById(string id)
+        {
+            var list = await _database.GetById(id);
             return Result.Success(list);
         }
     }
