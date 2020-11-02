@@ -10,7 +10,7 @@ namespace Products
     {
         [FunctionName("DeleteProducts")]
         public static IActionResult Run(
-            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "products")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "api/products")] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("DeleteProducts HTTP trigger function invoked.");
