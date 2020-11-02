@@ -13,10 +13,7 @@ namespace Products
     public static class UpdateProduct
     {
         [FunctionName("UpdateProduct")]
-        public static IActionResult Run(
-            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "products/{id}")] HttpRequest req,
-            int id,
-            ILogger log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "products/{id}")] HttpRequest req, int id, ILogger log)
         {
             log.LogInformation("UpdateProduct HTTP trigger function invoked.");
             return new NoContentResult();
