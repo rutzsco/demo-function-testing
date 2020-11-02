@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Products.UnitTest", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Products.FunctionalTest", "..\Api.Products.FunctionalTest\Api.Products.FunctionalTest.csproj", "{1F969BF7-A1F0-4148-8648-515CB446DAA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Products.IntegrationTest", "..\Api.Products.IntegrationTest\Api.Products.IntegrationTest.csproj", "{953EB4D8-1D50-4447-8C5E-9099C06971BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Products.IntegrationTest", "..\Api.Products.IntegrationTest\Api.Products.IntegrationTest.csproj", "{953EB4D8-1D50-4447-8C5E-9099C06971BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
