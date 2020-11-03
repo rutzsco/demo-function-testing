@@ -13,9 +13,9 @@ namespace Api.Products
     public static class VerifyEndpoint
     {
         [FunctionName("VerifyEndpoint")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "loaderio-f87f3bbfeae57b849bdda6ba5937d2e8")] HttpRequest req)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "loaderio-960b7d2843c53118d74da561507e6e31")] HttpRequest req)
         {
-            return new OkObjectResult("loaderio-f87f3bbfeae57b849bdda6ba5937d2e8");
+            return new OkObjectResult("loaderio-960b7d2843c53118d74da561507e6e31");
         }
     }
 }
