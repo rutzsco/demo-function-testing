@@ -62,7 +62,7 @@ stages:
                 azureSubscription: '$(azureSubscription)'
                 resourceGroupName: '$(resourceGroupName)'
                 location: '$(region)'
-                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-consumption.json'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-premium.json'
                 overrideParameters: '-appName $(appName)-pp -storageAccountName $(storageAccountName)pp'
                 deploymentOutputs: ResourceGroupDeploymentOutputs
 
