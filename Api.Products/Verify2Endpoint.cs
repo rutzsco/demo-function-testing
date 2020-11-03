@@ -10,12 +10,12 @@ using Newtonsoft.Json;
 
 namespace Api.Products
 {
-    public static class VerifyEndpoint
+    public static class Verify2Endpoint
     {
-        [FunctionName("VerifyEndpoint")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "loaderio-960b7d2843c53118d74da561507e6e31")] HttpRequest req)
+        [FunctionName("Verify2Endpoint")]
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "loaderio-34491d16cf055637d8fa54209d63c993")] HttpRequest req)
         {
-            return new OkObjectResult("loaderio-960b7d2843c53118d74da561507e6e31");
+            return new OkObjectResult("loaderio-34491d16cf055637d8fa54209d63c993");
         }
     }
 }
