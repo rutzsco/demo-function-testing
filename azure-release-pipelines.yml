@@ -56,30 +56,12 @@ stages:
                 csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-consumption.json'
                 overrideParameters: '-appName $(appName) -storageAccountName $(storageAccountName)'
                 deploymentOutputs: ResourceGroupDeploymentOutputs
-            - task: AzureResourceGroupDeployment@2
-              displayName: 'Create Function Infrastructure'
-              inputs:
-                azureSubscription: '$(azureSubscription)'
-                resourceGroupName: '$(resourceGroupName)'
-                location: '$(region)'
-                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-premium.json'
-                overrideParameters: '-appName $(appName)-pp -storageAccountName $(storageAccountName)pp'
-                deploymentOutputs: ResourceGroupDeploymentOutputs
-
+            
             - task: AzureFunctionApp@1
               displayName: 'Azure functions app deploy'
               inputs:
                 azureSubscription: '$(azureSubscription)'
                 appType: functionApp
                 appName: $(appName)
-                package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
-                AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
-              
-            - task: AzureFunctionApp@1
-              displayName: 'Azure functions app deploy'
-              inputs:
-                azureSubscription: '$(azureSubscription)'
-                appType: functionApp
-                appName: $(appName)-pp
                 package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
                 AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
