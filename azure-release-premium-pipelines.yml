@@ -1,0 +1,86 @@
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: build
+    source: 'demo-function-testing - BUILD'
+  
+variables:
+  vmImageName: 'vs2017-win2016'
+  azureSubscription: 'AZ-PIPELINES-DEPLOYMENT-TO-RUTZSCO-DEMO'
+  region: 'Central US'
+  regionshort: 'centralus'
+
+stages:
+
+ - stage: CI
+   displayName: CI stage 
+   variables:
+     appName: 'demo-function-testing-api'
+     storageAccountName: 'azfunctdftaci'
+     resourceGroupName: 'demo-function-testing'  
+   jobs:
+   - deployment: Deploy
+     displayName: Deploy
+     environment: 'CI'
+     pool:
+        vmImage: $(vmImageName)   
+      
+     strategy:
+        runOnce:
+          deploy:
+  
+            steps:
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'CosmosDB - Deploy'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                resourceGroupName: '$(resourceGroupName)'
+                location: '$(region)'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/cosmos-db-serverless.json'
+                overrideParameters: '-accountName demo-function-testing-db-ci -databaseName ProductDatabase -location $(regionshort) -container1Name "Products" -container1PartitionKey "/id"'
+                deploymentOutputs: CosmosDBDeploymentOutputs
+
+            - powershell: |
+                $outputs = ConvertFrom-Json $($env:CosmosDBDeploymentOutputs)
+                foreach ($output in $outputs.PSObject.Properties) {
+                Write-Host "##vso[task.setvariable variable=CosmosDBDeploymentOutputs_$($output.Name)]$($output.Value.value)"
+                } 
+
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'Create Function Infrastructure'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                resourceGroupName: '$(resourceGroupName)'
+                location: '$(region)'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-consumption.json'
+                overrideParameters: '-appName $(appName) -storageAccountName $(storageAccountName)'
+                deploymentOutputs: ResourceGroupDeploymentOutputs
+
+            - task: AzureResourceGroupDeployment@2
+              displayName: 'Create Function Infrastructure'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                resourceGroupName: '$(resourceGroupName)'
+                location: '$(region)'
+                csmFile: '$(Pipeline.Workspace)/build/Infrastructure/function-app-premium.json'
+                overrideParameters: '-appName $(appName)-pp -storageAccountName $(storageAccountName)pp'
+                deploymentOutputs: ResourceGroupDeploymentOutputs
+            
+            - task: AzureFunctionApp@1
+              displayName: 'Azure functions app deploy'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                appType: functionApp
+                appName: $(appName)
+                package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
+                AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
+            
+            - task: AzureFunctionApp@1
+              displayName: 'Azure functions app deploy'
+              inputs:
+                azureSubscription: '$(azureSubscription)'
+                appType: functionApp
+                appName: $(appName)-pp
+                package: '$(Pipeline.Workspace)/build/App/Api.Products.zip'
+                AppSettings: '-CosmosDBConnection $(CosmosDBDeploymentOutputs_connectionString)'
