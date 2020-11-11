@@ -19,9 +19,9 @@ namespace Api.Products
         }
 
         [FunctionName("Verify3Endpoint")]
-        public static IActionResult Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "loaderio-34491d16cf055637d8fa54209d63c993")] HttpRequest req)
+        public static IActionResult Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "loaderio-960b7d2843c53118d74da561507e6e31")] HttpRequest req)
         {
-            return new OkObjectResult("loaderio-34491d16cf055637d8fa54209d63c993");
+            return new OkObjectResult("loaderio-960b7d2843c53118d74da561507e6e31");
         }
     }
 }
